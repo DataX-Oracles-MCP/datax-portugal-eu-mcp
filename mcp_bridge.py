@@ -17,7 +17,7 @@ from typing import Any
 
 DEFAULT_BASE_URL = os.environ.get("DATAX_BASE_URL", "https://datax-pt.duckdns.org").rstrip("/")
 PAID_TOOLS = {"search_tenders", "find_distressed_auctions", "find_funded_companies", "check_company_risk", "get_tender_detail"}
-SERVER_INSTRUCTIONS = "DataX Portugal & EU Official Registry MCP Server (datax-pt.duckdns.org). 1) Call get_pricing and get_catalog for free to inspect accepted stablecoins (USDC, MiCA EURC), treasury addresses, prices ($0.10/$0.30/$0.50), and fresh section counts. 2) Set DATAX_TOKEN (issued via /api/v1/challenge and /api/v1/issue-token) to call search_tenders ($0.10), find_funded_companies ($0.10), find_distressed_auctions ($0.10), or check_company_risk ($0.30); each match returns an opaque item_ref ('dx_...'). 3) Pass any item_ref to get_tender_detail ($0.50) to unlock full verbatim text, corporate IDs, and official URLs. Unspent change_token balance rotates automatically in memory across consecutive calls."
+SERVER_INSTRUCTIONS = "DataX Portugal & EU Official Registry MCP Server (datax-pt.duckdns.org). 1) Call get_pricing and get_catalog for free to inspect accepted stablecoins (USDC, MiCA EURC), treasury addresses, prices ($0.10/$0.30/$0.50), and fresh section counts. 2) Set DATAX_TOKEN (issued via /api/v1/challenge and /api/v1/issue-token) to call search_tenders ($0.10), find_funded_companies ($0.10), or check_company_risk ($0.30) (use datax-spain-eu-mcp for find_distressed_auctions); each match returns an opaque item_ref ('dx_...'). 3) Pass any item_ref to get_tender_detail ($0.50) to unlock full verbatim text, corporate IDs, and official URLs. Unspent change_token balance rotates automatically in memory across consecutive calls."
 TOOLS: list[dict[str, Any]] = [
     {
         "name": "get_pricing",
@@ -132,7 +132,7 @@ TOOLS: list[dict[str, Any]] = [
     {
         "name": "search_tenders",
         "title": "Search Official Registry & Tender Records",
-        "description": "Run full-text and structured searches across indexed Portugal and EU official registries (IMPIC Portal BASE public contracts/notices, EU TED PRT, SEDIA, and EU FSF). Costs $0.10 USDC or EURC per call using DATAX_TOKEN (returns HTTP 402 payment instructions if unset or depleted; auto-rotates change_token in memory). Returns masked previews and opaque item_ref handles ('dx_...'); pass an item_ref to get_tender_detail ($0.50) to unlock full verbatim text, corporate IDs, and official URLs. Use find_funded_companies when filtering by EUR amounts/liquidity events, find_distressed_auctions for real-estate discounts, or check_company_risk to screen a specific company.",
+        "description": "Run full-text and structured searches across indexed Portugal and EU official registries (IMPIC Portal BASE public contracts/notices, EU TED PRT, SEDIA, and EU FSF). Costs $0.10 USDC or EURC per call using DATAX_TOKEN (returns HTTP 402 payment instructions if unset or depleted; auto-rotates change_token in memory). Returns masked previews and opaque item_ref handles ('dx_...'); pass an item_ref to get_tender_detail ($0.50) to unlock full verbatim text, corporate IDs, and official URLs. Use find_funded_companies when filtering by EUR amounts/liquidity events or check_company_risk to screen a specific company (use datax-spain-eu-mcp for Spanish property auctions via find_distressed_auctions).",
         "annotations": {
             "readOnlyHint": True,
             "destructiveHint": False,
@@ -297,8 +297,8 @@ TOOLS: list[dict[str, Any]] = [
     },
     {
         "name": "find_distressed_auctions",
-        "title": "Find Discounted Real-Estate Auctions",
-        "description": "Screen official Spanish judicial and notarial real-estate auctions enriched with Catastro valuation data, ranked ascending by debt-to-value ratio (ltv_pct) and equity margin. Costs $0.10 USDC or EURC per call via DATAX_TOKEN (returns HTTP 402 if unset). Returns masked auction previews and opaque item_ref handles ('dx_...') unlockable via get_tender_detail ($0.50). Note: this Portugal-only node does not index Spanish property auctions and returns empty matches; use search_tenders or find_funded_companies instead.",
+        "title": "Screen Spanish Real-Estate Auctions (Spain Node Only)",
+        "description": "Compatibility bridge for Spanish Catastro/BOE judicial real-estate auctions ($0.10 USDC or EURC via DATAX_TOKEN; returns HTTP 402 if unset). Unless DATAX_BASE_URL points to the Spain node (datax-spain-eu-mcp), calls on this Portugal server always return empty matches because Spanish property auctions are not indexed locally—prefer search_tenders or find_funded_companies for Portugal records.",
         "annotations": {
             "readOnlyHint": True,
             "destructiveHint": False,
